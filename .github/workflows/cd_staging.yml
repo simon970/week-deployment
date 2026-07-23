@@ -9,11 +9,12 @@ jobs:
      name: Deploying everything to the staging cluster
      steps:
        - run: |
-            echo "${{secrets.SSH_PRIVATE_KEY}}" &> ~/ssh_key
-            mkdir -p /home/runner/.ssh
-            cd /home/runner/.ssh
-            touch known_hosts
-            echo "${{secrets.SSH_KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
+            printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > "$HOME/ssh_key"
+            chmod 600 "$HOME/ssh_key"
+
+            mkdir -p "$HOME/.ssh"
+            printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > "$HOME/.ssh/known_hosts"
+            chmod 600 "$HOME/.ssh/known_hosts"
             ssh -i ~/ssh_key root@142.93.247.236
             cd week-deployment/Devops/bms && git pull
             pnpm install

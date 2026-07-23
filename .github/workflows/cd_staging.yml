@@ -16,7 +16,9 @@ jobs:
             echo "${{secrets.KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
             chmod 700 /home/runner/ssh_key
             ssh -i ~/ssh_key root@142.93.247.236 -t "cd week-deployment/ && git pull origin main && export PATH=/root/.nvm/versions/node/v24.18.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin && 
-            npm i -g pnpm && pnpm install && 
+            npm i -g pnpm && pnpm install && cd packages/prisma &&
+            pnpm exec prisma generate &&
+            cd ../.. && && 
             pnpm run build &&
             pm2 restart http-server && pm2 restart nextjs && pm2 restart web-socket"
 

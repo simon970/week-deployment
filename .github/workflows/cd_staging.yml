@@ -10,7 +10,8 @@ jobs:
      steps:
        - run: |
             echo "${{secrets.SSH_PRIVATE_KEY}}" &> ~/ssh_key
-            cd .ssh
+            mkdir -p /home/runner/.ssh
+            cd /home/runner/.ssh
             touch known_hosts
             echo "${{secrets.SSH_KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
             ssh -i ~/ssh_key root@142.93.247.236

@@ -11,8 +11,8 @@ jobs:
        - run: |
             echo "${{secrets.SSH_PRIVATE_KEY}}" &> ~/ssh_key
             mkdir -p /home/runner/.ssh
+            ls -l /home/runner/.ssh
             touch /home/runner/.ssh/known_hosts
-            ls -l /home/runner/.ssh/known_hosts
             echo "${{secrets.SSH_KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
             ssh -i ~/ssh_key root@142.93.247.236
             cd week-deployment/Devops/bms && git pull

@@ -19,6 +19,7 @@ jobs:
             npm i -g pnpm && pnpm install && cd packages/prisma &&
             pnpm exec prisma generate &&
             cd ../.. &&
+            cp packages/prisma/.env apps/web/.env.local &&
             pnpm run build &&
             pm2 restart http-server && pm2 restart nextjs && pm2 restart web-socket"
 

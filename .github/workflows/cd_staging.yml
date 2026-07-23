@@ -14,13 +14,14 @@ jobs:
             mkdir -p "$HOME/.ssh"
             printf '%s\n' "${{ secrets.SSH_KNOWN_HOSTS }}" > "$HOME/.ssh/known_hosts"
             chmod 600 "$HOME/.ssh/known_hosts"
-            ssh -i ~/ssh_key root@142.93.247.236
+            ssh -i "$HOME/ssh_key" root@142.93.247.236 << 'EOF'
             cd week-deployment/Devops/bms && git pull
             pnpm install
             pnpm run build
             pm2 restart http-server
             pm2 restart nextjs
             pm2 restart web-socket
+          EOF
 
 
 

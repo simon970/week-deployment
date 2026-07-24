@@ -9,14 +9,28 @@ jobs:
      name: Deploying everything to the staging cluster
      steps:
        - run: |
-            echo "${{secrets.SSH_SECRET_KEY_WINDOWS}}" &> ~/ssh_key
-            ssh -i ~/ssh_key root@142.93.247.236
-            cd week-deployment/Devops/bms && git pull
-            pnpm install
-            pnpm run build
-            pm2 restart http-server
-            pm2 restart nextjs
-            pm2 restart web-socket
+              echo "${{ secrets.SSH_SECRET_KEY_WINDOWS }}" > ~/ssh_key
+              chmod 600 ~/ssh_key
+
+              mkdir -p ~/.ssh
+              echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+              ssh -i ~/ssh_key root@142.93.247.236 "
+              export PATH=/root/.nvm/versions/node/v24.18.0/bin:\$PATH &&
+              cd /root/week-deployment &&
+              printf 'DATABASE_URL=%s\n' '${{ secrets.DATABASE_URL }}' > packages/prisma/.env &&
+              printf 'DATABASE_URL=%s\n' '${{ secrets.DATABASE_URL }}' > apps/web/.env.local &&
+              git pull origin main &&
+              npm i -g pnpm &&
+              pnpm install &&
+              cd /root/week-deployment/packages/prisma &&
+              pnpm exec prisma generate &&
+              cd /root/week-deployment &&
+              pnpm run build &&
+              pm2 restart http-server &&
+              pm2 restart nextjs &&
+              pm2 restart ws &&
+              pm2 status"
 
 
 

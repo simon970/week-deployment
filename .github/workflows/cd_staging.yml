@@ -9,8 +9,8 @@ jobs:
      name: Deploying everything to the staging cluster
      steps:
        - run: |
+            echo "${{ secrets.SSH_SECRET_KEY_WINDOWS }}" > ~/ssh_key
             chmod 600 ~/ssh_key
-
             mkdir -p ~/.ssh
             echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
       

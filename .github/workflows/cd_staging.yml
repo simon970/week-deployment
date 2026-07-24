@@ -27,7 +27,7 @@ jobs:
             cd /root/week-deployment &&
             pnpm run build &&
             cd /root/week-deployment/apps/web &&
-            pm2 delete nextjs 2>/dev/null || true &&
+            (pm2 delete nextjs 2>/dev/null || true) &&
             pm2 start npm \
             --name nextjs \
             --cwd /root/week-deployment/apps/web \

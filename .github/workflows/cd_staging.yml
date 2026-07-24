@@ -27,10 +27,14 @@ jobs:
               pnpm exec prisma generate &&
               cd /root/week-deployment &&
               pnpm run build &&
-              pm2 restart http-server &&
-              pm2 restart nextjs &&
-              pm2 restart ws &&
-              pm2 status"
+              cd /root/week-deployment/apps/web &&
+              export DATABASE_URL='${{ secrets.DATABASE_SECRET }}' &&
+              pm2 restart nextjs --update-env &&
+              cd /root/week-deployment &&
+              pm2 restart http-server --update-env &&
+              pm2 restart web-socket --update-env &&
+              pm2 status
+              "
 
 
 

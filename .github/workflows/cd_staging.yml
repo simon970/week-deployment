@@ -28,7 +28,7 @@ jobs:
               cd /root/week-deployment &&
               pnpm run build &&
               cd /root/week-deployment/apps/web &&
-              export DATABASE_URL='${{ secrets.DATABASE_SECRET }}' &&
+              export DATABASE_URL='${{ secrets.DATABASE_URL }}' &&
               pm2 restart nextjs --update-env &&
               cd /root/week-deployment &&
               pm2 restart http-server --update-env &&

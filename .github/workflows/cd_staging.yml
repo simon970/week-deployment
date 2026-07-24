@@ -33,7 +33,7 @@ jobs:
             --cwd /root/week-deployment/apps/web \
             -- start &&
             pm2 restart http-server &&
-            pm2 restart web-socket &&
+            pm2 restart ws &&
             pm2 save &&
             pm2 status"
 

@@ -9,28 +9,33 @@ jobs:
      name: Deploying everything to the staging cluster
      steps:
        - run: |
-              echo "${{ secrets.SSH_SECRET_KEY_WINDOWS }}" > ~/ssh_key
-              chmod 600 ~/ssh_key
+            chmod 600 ~/ssh_key
 
-              mkdir -p ~/.ssh
-              echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-
-              ssh -i ~/ssh_key root@142.93.247.236 "
-              export PATH=/root/.nvm/versions/node/v24.18.0/bin:\$PATH &&
-              cd /root/week-deployment &&
-              printf 'DATABASE_URL=%s\n' '${{ secrets.DATABASE_URL }}' > packages/prisma/.env &&
-              printf 'DATABASE_URL=%s\n' '${{ secrets.DATABASE_URL }}' > apps/web/.env.local &&
-              git pull origin main &&
-              npm i -g pnpm &&
-              pnpm install &&
-              cd /root/week-deployment/packages/prisma &&
-              pnpm exec prisma generate &&
-              cd /root/week-deployment &&
-              pnpm run build &&
-              pm2 restart http-server &&
-              pm2 restart nextjs &&
-              pm2 restart ws &&
-              pm2 status"
+            mkdir -p ~/.ssh
+            echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      
+            ssh -i ~/ssh_key root@142.93.247.236 "
+            export PATH=/root/.nvm/versions/node/v24.18.0/bin:\$PATH &&
+            export DATABASE_URL='${{ secrets.DATABASE_SECRET }}' &&
+            cd /root/week-deployment &&
+            git pull origin main &&
+            npm i -g pnpm &&
+            pnpm install &&
+            printf 'DATABASE_URL=%s\n' \"\$DATABASE_URL\" > apps/web/.env.local &&
+            cd /root/week-deployment/packages/prisma &&
+            pnpm exec prisma generate &&
+            cd /root/week-deployment &&
+            pnpm run build &&
+            cd /root/week-deployment/apps/web &&
+            pm2 delete nextjs 2>/dev/null || true &&
+            pm2 start npm \
+            --name nextjs \
+            --cwd /root/week-deployment/apps/web \
+            -- start &&
+            pm2 restart http-server &&
+            pm2 restart web-socket &&
+            pm2 save &&
+            pm2 status"
 
 
 
